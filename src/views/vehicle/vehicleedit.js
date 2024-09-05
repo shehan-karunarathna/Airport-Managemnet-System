@@ -15,32 +15,31 @@ import {
 } from '@coreui/react'
 import axios from 'axios'
 
-const Airplaneedit = () => {
-  const { plane_id } = useParams() // Get planeId from URL parameters
+const Vehicleedit = () => {
+  const { vehicle_id } = useParams() // Get vehicleId from URL parameters
   const [validated, setValidated] = useState(false)
-  const [airplaneData, setAirplaneData] = useState({
-    model: '',
-    manufacturer: '',
-    year_of_manufacturer: '',
-    seating_capacity: '',
-    fuel_capacity: '',
+  const [vehicleData, setVehicleData] = useState({
+    vehicleType: '',
+    noPlate: '',
+    vehicleModel: '',
+    fuelType: '',
   })
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Fetch airplane data based on planeId from the backend API
-    const fetchAirplaneData = async () => {
+    // Fetch vehicle data based on vehicleId from the backend API
+    const fetchVehicleData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/v1/airplane/getAirplaneByPlaneid/${plane_id}`,
+          `http://localhost:8080/api/v1/vehicle/getVehicleByVehicleId/${vehicle_id}`,
         )
-        setAirplaneData(response.data) // Auto-fill form with fetched data
+        setVehicleData(response.data) // Auto-fill form with fetched data
       } catch (error) {
-        console.error('There was an error fetching the airplane data!', error)
+        console.error('There was an error fetching the vehicle data!', error)
       }
     }
-    fetchAirplaneData()
-  }, [plane_id]) // Fetch data when planeId changes
+    fetchVehicleData()
+  }, [vehicle_id]) // Fetch data when vehicleId changes
 
   const handleSubmit = async (event) => {
     const form = event.currentTarget
@@ -66,16 +65,16 @@ const Airplaneedit = () => {
 
       if (result.isConfirmed) {
         try {
-          // Send PUT request to update the airplane data to the backend
-          await axios.put('http://localhost:8080/api/v1/airplane/updateAirplane', airplaneData)
+          // Send PUT request to update the vehicle data to the backend
+          await axios.put(`http://localhost:8080/api/v1/vehicle/updateVehicle`, vehicleData)
 
           // Show SweetAlert2 success notification
           Swal.fire('Saved!', 'Your changes have been saved.', 'success')
 
-          // Navigate back to the airplane list
-          navigate('/Airplane/Airplanelist')
+          // Navigate back to the vehicle list
+          navigate('/vehicle/vehiclelist')
         } catch (error) {
-          console.error('There was an error saving the airplane data!', error)
+          console.error('There was an error saving the vehicle data!', error)
 
           // Show SweetAlert2 error notification
           Swal.fire('Error', 'There was an issue saving your changes.', 'error')
@@ -100,9 +99,9 @@ const Airplaneedit = () => {
               <div
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
               >
-                <strong>Edit Airplane</strong>
+                <strong>Edit Vehicle</strong>
                 <CButton color="secondary" onClick={handleBackButtonClick}>
-                  Back to Airplanes list
+                  Back to Vehicle list
                 </CButton>
               </div>
             </CCardHeader>
@@ -114,25 +113,39 @@ const Airplaneedit = () => {
                 onSubmit={handleSubmit}
               >
                 <CCol md={6}>
-                  <CFormLabel htmlFor="airplaneModel">Model</CFormLabel>
+                  <CFormLabel htmlFor="vehicleType">Vehicle Type</CFormLabel>
                   <CFormInput
                     type="text"
-                    id="airplaneModel"
-                    value={airplaneData.model}
-                    onChange={(e) => setAirplaneData({ ...airplaneData, model: e.target.value })}
+                    id="vehicleType"
+                    value={vehicleData.vehicleType}
+                    onChange={(e) =>
+                      setVehicleData({ ...vehicleData, vehicleType: e.target.value })
+                    }
                     required
                   />
                   <CFormFeedback valid>Looks good!</CFormFeedback>
                 </CCol>
 
                 <CCol md={6}>
-                  <CFormLabel htmlFor="airplaneManufacturer">Manufacturer</CFormLabel>
+                  <CFormLabel htmlFor="noPlate">No Plate</CFormLabel>
                   <CFormInput
                     type="text"
-                    id="airplaneManufacturer"
-                    value={airplaneData.manufacturer}
+                    id="noPlate"
+                    value={vehicleData.noPlate}
+                    onChange={(e) => setVehicleData({ ...vehicleData, noPlate: e.target.value })}
+                    required
+                  />
+                  <CFormFeedback valid>Looks good!</CFormFeedback>
+                </CCol>
+
+                <CCol md={6}>
+                  <CFormLabel htmlFor="vehicleModel">Vehicle Model</CFormLabel>
+                  <CFormInput
+                    type="text"
+                    id="vehicleModel"
+                    value={vehicleData.vehicleModel}
                     onChange={(e) =>
-                      setAirplaneData({ ...airplaneData, manufacturer: e.target.value })
+                      setVehicleData({ ...vehicleData, vehicleModel: e.target.value })
                     }
                     required
                   />
@@ -140,51 +153,12 @@ const Airplaneedit = () => {
                 </CCol>
 
                 <CCol md={6}>
-                  <CFormLabel htmlFor="yearOfManufacturer">Year of Manufacturer</CFormLabel>
+                  <CFormLabel htmlFor="fuelType">Fuel Type</CFormLabel>
                   <CFormInput
-                    type="number"
-                    id="yearOfManufacturer"
-                    value={airplaneData.year_of_manufacturer}
-                    onChange={(e) =>
-                      setAirplaneData({
-                        ...airplaneData,
-                        year_of_manufacturer: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                  <CFormFeedback valid>Looks good!</CFormFeedback>
-                </CCol>
-
-                <CCol md={6}>
-                  <CFormLabel htmlFor="seatingCapacity">Seating Capacity</CFormLabel>
-                  <CFormInput
-                    type="number"
-                    id="seatingCapacity"
-                    value={airplaneData.seating_capacity}
-                    onChange={(e) =>
-                      setAirplaneData({
-                        ...airplaneData,
-                        seating_capacity: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                  <CFormFeedback valid>Looks good!</CFormFeedback>
-                </CCol>
-
-                <CCol md={6}>
-                  <CFormLabel htmlFor="fuelCapacity">Fuel Capacity (in liters)</CFormLabel>
-                  <CFormInput
-                    type="number"
-                    id="fuelCapacity"
-                    value={airplaneData.fuel_capacity}
-                    onChange={(e) =>
-                      setAirplaneData({
-                        ...airplaneData,
-                        fuel_capacity: e.target.value,
-                      })
-                    }
+                    type="text"
+                    id="fuelType"
+                    value={vehicleData.fuelType}
+                    onChange={(e) => setVehicleData({ ...vehicleData, fuelType: e.target.value })}
                     required
                   />
                   <CFormFeedback valid>Looks good!</CFormFeedback>
@@ -204,4 +178,4 @@ const Airplaneedit = () => {
   )
 }
 
-export default Airplaneedit
+export default Vehicleedit

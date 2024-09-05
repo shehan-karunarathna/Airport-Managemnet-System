@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   CCard,
@@ -15,46 +15,70 @@ import {
   CTableDataCell,
 } from '@coreui/react'
 import { FaEdit, FaTrash } from 'react-icons/fa'
+import axios from 'axios'
+import Swal from 'sweetalert2' // Import SweetAlert2
 
 const Airplanelist = () => {
-  const navigate = useNavigate() // Initialize useNavigate
+  const navigate = useNavigate()
+  const [airplaneData, setAirplaneData] = useState([])
+
+  // Fetch data from the Spring Boot API
+  useEffect(() => {
+    axios
+      .get('http://localhost:8080/api/v1/airplane/getairplanes')
+      .then((response) => {
+        setAirplaneData(response.data)
+      })
+      .catch((error) => {
+        console.error('There was an error fetching the airplanes!', error)
+      })
+  }, [])
 
   const handleRegisterButtonClick = () => {
-    navigate('/AirPlane/AirplaneReg') // Navigate to the AirplaneReg form
+    navigate('/AirPlane/AirplaneReg')
   }
 
-  const handleUpdateButtonClick = (registrationNumber) => {
-    navigate(`/AirPlane/Airplaneedit/${registrationNumber}`) // Navigate to the Airplaneedit form with registration number
+  const handleUpdateButtonClick = (PlaneID) => {
+    navigate(`/AirPlane/Airplaneedit/${PlaneID}`)
   }
 
-  const handleDeleteButtonClick = (registrationNumber) => {
-    // Implement delete functionality here
-    console.log(`Delete airplane with registration number ${registrationNumber}`)
-  }
+  const handleDeleteButtonClick = (airplane) => {
+    // Show SweetAlert2 confirmation dialog
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Implement delete functionality with API call, sending the entire airplane object
+        axios
+          .delete('http://localhost:8080/api/v1/airplane/deleteairplane', {
+            data: airplane, // Send the airplane object in the request body
+          })
+          .then(() => {
+            //  refresh the list after deletion
+            setAirplaneData(airplaneData.filter((a) => a.PlaneID !== airplane.PlaneID))
 
-  const airplaneData = [
-    {
-      model: 'Boeing 747',
-      manufacturer: 'Boeing',
-      registrationNumber: 'N12345',
-      ownerName: 'John Doe',
-      contactNumber: '123-456-7890',
-      yearOfManufacture: '1998',
-      airplaneType: 'Commercial',
-      ownerAddress: '123 Main St, New York, NY',
-    },
-    {
-      model: 'Airbus A320',
-      manufacturer: 'Airbus',
-      registrationNumber: 'A67890',
-      ownerName: 'Jane Smith',
-      contactNumber: '098-765-4321',
-      yearOfManufacture: '2005',
-      airplaneType: 'Private',
-      ownerAddress: '456 Oak Ave, Los Angeles, CA',
-    },
-    // Add more airplane data as needed
-  ]
+            // Show success message
+            Swal.fire('Deleted!', 'The airplane has been deleted.', 'success')
+          })
+          .catch((error) => {
+            console.error(
+              `There was an error deleting the airplane with ID ${airplane.PlaneID}!`,
+              error,
+            )
+
+            // Show error message
+            Swal.fire('Error!', 'There was an error deleting the airplane.', 'error')
+          })
+      }
+    })
+  }
 
   return (
     <CRow>
@@ -62,7 +86,7 @@ const Airplanelist = () => {
         <CCard className="mb-4">
           <CCardHeader>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <strong>Airplane Registration</strong>
+              <strong>Airplane List</strong>
               <CButton color="primary" onClick={handleRegisterButtonClick}>
                 Register New Airplane
               </CButton>
@@ -73,50 +97,52 @@ const Airplanelist = () => {
               <CTableHead>
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
-                  <CTableHeaderCell>Airplane Model</CTableHeaderCell>
+                  <CTableHeaderCell>Model</CTableHeaderCell>
                   <CTableHeaderCell>Manufacturer</CTableHeaderCell>
-                  <CTableHeaderCell>Registration Number</CTableHeaderCell>
-                  <CTableHeaderCell>Owners Name</CTableHeaderCell>
-                  <CTableHeaderCell>Contact Number</CTableHeaderCell>
-                  <CTableHeaderCell>Year of Manufacture</CTableHeaderCell>
-                  <CTableHeaderCell>Airplane Type</CTableHeaderCell>
-                  <CTableHeaderCell>Owners Address</CTableHeaderCell>
-                  <CTableHeaderCell>Actions</CTableHeaderCell> {/* New Action column */}
+                  <CTableHeaderCell>Year of Manufacturer</CTableHeaderCell>
+                  <CTableHeaderCell>Seating Capacity</CTableHeaderCell>
+                  <CTableHeaderCell>Fuel Capacity</CTableHeaderCell>
+                  <CTableHeaderCell>Actions</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
-                {airplaneData.map((airplane, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell>{index + 1}</CTableDataCell>
-                    <CTableDataCell>{airplane.model}</CTableDataCell>
-                    <CTableDataCell>{airplane.manufacturer}</CTableDataCell>
-                    <CTableDataCell>{airplane.registrationNumber}</CTableDataCell>
-                    <CTableDataCell>{airplane.ownerName}</CTableDataCell>
-                    <CTableDataCell>{airplane.contactNumber}</CTableDataCell>
-                    <CTableDataCell>{airplane.yearOfManufacture}</CTableDataCell>
-                    <CTableDataCell>{airplane.airplaneType}</CTableDataCell>
-                    <CTableDataCell>{airplane.ownerAddress}</CTableDataCell>
-                    <CTableDataCell>
-                      <CButton
-                        color="warning"
-                        onClick={() => handleUpdateButtonClick(airplane.registrationNumber)}
-                        className="me-2"
-                        shape="rounded"
-                        variant="outline"
-                      >
-                        <FaEdit />
-                      </CButton>
-                      <CButton
-                        color="danger"
-                        onClick={() => handleDeleteButtonClick(airplane.registrationNumber)}
-                        shape="rounded"
-                        variant="outline"
-                      >
-                        <FaTrash />
-                      </CButton>
+                {airplaneData.length > 0 ? (
+                  airplaneData.map((airplane, index) => (
+                    <CTableRow key={airplane.PlaneID}>
+                      <CTableDataCell>{index + 1}</CTableDataCell>
+                      <CTableDataCell>{airplane.Model}</CTableDataCell>
+                      <CTableDataCell>{airplane.Manufacturer}</CTableDataCell>
+                      <CTableDataCell>{airplane.YearOfManufacturer}</CTableDataCell>
+                      <CTableDataCell>{airplane.SeatingCapacity}</CTableDataCell>
+                      <CTableDataCell>{airplane.FuelCapacity}</CTableDataCell>
+                      <CTableDataCell>
+                        <CButton
+                          color="warning"
+                          onClick={() => handleUpdateButtonClick(airplane.PlaneID)}
+                          className="me-2"
+                          shape="rounded"
+                          variant="outline"
+                        >
+                          <FaEdit />
+                        </CButton>
+                        <CButton
+                          color="danger"
+                          onClick={() => handleDeleteButtonClick(airplane)}
+                          shape="rounded"
+                          variant="outline"
+                        >
+                          <FaTrash />
+                        </CButton>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan="7" className="text-center">
+                      No airplanes found.
                     </CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
           </CCardBody>

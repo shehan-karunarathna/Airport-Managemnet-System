@@ -5,10 +5,10 @@ const AppFooter = () => {
   return (
     <CFooter className="px-4">
       <div>
-        <span className="ms-1">&copy; 2024 Team 22.</span>
+        <span className="ms-1">&copy; 2024 Team 23.</span>
       </div>
       <div className="ms-auto">
-        <span className="me-1">Powered by Team 22</span>
+        <span className="me-1">Powered by Team 23</span>
       </div>
     </CFooter>
   )

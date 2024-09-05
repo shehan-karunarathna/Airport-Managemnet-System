@@ -7,33 +7,67 @@ import {
   CCardHeader,
   CCol,
   CForm,
-  CFormInput,
   CFormFeedback,
+  CFormInput,
   CFormLabel,
-  CFormSelect,
   CRow,
 } from '@coreui/react'
+import axios from 'axios'
+import Swal from 'sweetalert2' // Import SweetAlert2
 
 const Createadmin = () => {
   const [validated, setValidated] = useState(false)
-  const [profilePicture, setProfilePicture] = useState(null)
+  const [adminData, setAdminData] = useState({
+    admin_fullName: '',
+    userName: '',
+    admin_position: '',
+    password: '',
+    admin_email: '',
+    admin_phone: '',
+    admin_address: '',
+  })
   const navigate = useNavigate()
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     const form = event.currentTarget
     if (form.checkValidity() === false) {
       event.preventDefault()
       event.stopPropagation()
+    } else {
+      event.preventDefault()
+      event.stopPropagation()
+      setValidated(true)
+
+      try {
+        const response = await axios.post(
+          'http://localhost:8080/api/v1/admin/createadmin',
+          adminData,
+        )
+        if (response.status === 200 || response.status === 201) {
+          // Show SweetAlert2 success notification
+          Swal.fire({
+            icon: 'success',
+            title: 'Admin Registered!',
+            text: 'The admin has been added successfully.',
+          }).then(() => {
+            // Navigate to the admin list after success
+            navigate('/admin/adminlist')
+          })
+        }
+      } catch (error) {
+        console.error('There was an error registering the admin!', error)
+        // Show SweetAlert2 error notification
+        Swal.fire({
+          icon: 'error',
+          title: 'Registration Failed',
+          text: 'Failed to register the admin. Please try again.',
+        })
+      }
     }
-    setValidated(true)
   }
 
   const handleBackButtonClick = () => {
     navigate(-1)
-  }
-
-  const handleProfilePictureChange = (event) => {
-    setProfilePicture(event.target.files[0])
   }
 
   return (
@@ -41,11 +75,10 @@ const Createadmin = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            {/* Header with Title and Back Button */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <strong>Admin Registration</strong>
+              <strong>Create Admin</strong>
               <CButton color="secondary" onClick={handleBackButtonClick}>
-                Back to Admin List
+                Back to Admin list
               </CButton>
             </div>
           </CCardHeader>
@@ -57,83 +90,82 @@ const Createadmin = () => {
               onSubmit={handleSubmit}
             >
               <CCol md={6}>
-                <CFormLabel htmlFor="adminFullName">Full Name</CFormLabel>
-                <CFormInput type="text" id="adminFullName" required />
-                <CFormFeedback valid>Looks good!</CFormFeedback>
+                <CFormLabel htmlFor="admin_fullName">Full Name</CFormLabel>
+                <CFormInput
+                  type="text"
+                  id="admin_fullName"
+                  value={adminData.admin_fullName}
+                  onChange={(e) => setAdminData({ ...adminData, admin_fullName: e.target.value })}
+                  required
+                />
+                <CFormFeedback invalid>Please provide a valid full name.</CFormFeedback>
               </CCol>
               <CCol md={6}>
-                <CFormLabel htmlFor="adminEmail">Email Address</CFormLabel>
-                <CFormInput type="email" id="adminEmail" required />
-                <CFormFeedback invalid>Please provide a valid email address.</CFormFeedback>
+                <CFormLabel htmlFor="userName">Username</CFormLabel>
+                <CFormInput
+                  type="text"
+                  id="userName"
+                  value={adminData.userName}
+                  onChange={(e) => setAdminData({ ...adminData, userName: e.target.value })}
+                  required
+                />
+                <CFormFeedback invalid>Please provide a valid username.</CFormFeedback>
               </CCol>
               <CCol md={6}>
-                <CFormLabel htmlFor="username">Username</CFormLabel>
-                <CFormInput type="text" id="username" required />
-                <CFormFeedback invalid>Please provide a username.</CFormFeedback>
+                <CFormLabel htmlFor="admin_position">Position</CFormLabel>
+                <CFormInput
+                  type="text"
+                  id="admin_position"
+                  value={adminData.admin_position}
+                  onChange={(e) => setAdminData({ ...adminData, admin_position: e.target.value })}
+                  required
+                />
+                <CFormFeedback invalid>Please provide a valid position.</CFormFeedback>
               </CCol>
               <CCol md={6}>
                 <CFormLabel htmlFor="password">Password</CFormLabel>
-                <CFormInput type="password" id="password" required />
-                <CFormFeedback invalid>Please provide a password.</CFormFeedback>
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel htmlFor="phoneNumber">Phone Number</CFormLabel>
-                <CFormInput type="text" id="phoneNumber" required />
-                <CFormFeedback invalid>Please provide a valid phone number.</CFormFeedback>
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel htmlFor="role">Role/Position</CFormLabel>
-                <CFormSelect id="role" required>
-                  <option value="" disabled selected>
-                    Choose...
-                  </option>
-                  <option>Admin</option>
-                  <option>Supervisor</option>
-                  <option>Manager</option>
-                </CFormSelect>
-                <CFormFeedback invalid>Please select a role.</CFormFeedback>
-              </CCol>
-              <CCol md={12}>
-                <CFormLabel htmlFor="address">Address</CFormLabel>
-                <CFormInput type="text" id="address" required />
-                <CFormFeedback invalid>Please provide a valid address.</CFormFeedback>
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel htmlFor="department">Assigned Department</CFormLabel>
-                <CFormSelect id="department" required>
-                  <option value="" disabled selected>
-                    Choose...
-                  </option>
-                  <option>Security</option>
-                  <option>Maintenance</option>
-                  <option>Customer Service</option>
-                </CFormSelect>
-                <CFormFeedback invalid>Please select a department.</CFormFeedback>
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel htmlFor="accessLevel">Access Level</CFormLabel>
-                <CFormSelect id="accessLevel" required>
-                  <option value="" disabled selected>
-                    Choose...
-                  </option>
-                  <option>Read-Only</option>
-                  <option>Read/Write</option>
-                  <option>Admin</option>
-                </CFormSelect>
-                <CFormFeedback invalid>Please select an access level.</CFormFeedback>
-              </CCol>
-
-              <CCol md={12}>
-                <CFormLabel htmlFor="profilePicture">Profile Picture</CFormLabel>
                 <CFormInput
-                  type="file"
-                  id="profilePicture"
-                  onChange={handleProfilePictureChange}
+                  type="password"
+                  id="password"
+                  value={adminData.password}
+                  onChange={(e) => setAdminData({ ...adminData, password: e.target.value })}
                   required
                 />
-                <CFormFeedback invalid>Please upload a profile picture.</CFormFeedback>
+                <CFormFeedback invalid>Please provide a valid password.</CFormFeedback>
               </CCol>
-
+              <CCol md={6}>
+                <CFormLabel htmlFor="admin_email">Email</CFormLabel>
+                <CFormInput
+                  type="email"
+                  id="admin_email"
+                  value={adminData.admin_email}
+                  onChange={(e) => setAdminData({ ...adminData, admin_email: e.target.value })}
+                  required
+                />
+                <CFormFeedback invalid>Please provide a valid email.</CFormFeedback>
+              </CCol>
+              <CCol md={6}>
+                <CFormLabel htmlFor="admin_phone">Phone</CFormLabel>
+                <CFormInput
+                  type="text"
+                  id="admin_phone"
+                  value={adminData.admin_phone}
+                  onChange={(e) => setAdminData({ ...adminData, admin_phone: e.target.value })}
+                  required
+                />
+                <CFormFeedback invalid>Please provide a valid phone number.</CFormFeedback>
+              </CCol>
+              <CCol md={12}>
+                <CFormLabel htmlFor="admin_address">Address</CFormLabel>
+                <CFormInput
+                  type="text"
+                  id="admin_address"
+                  value={adminData.admin_address}
+                  onChange={(e) => setAdminData({ ...adminData, admin_address: e.target.value })}
+                  required
+                />
+                <CFormFeedback invalid>Please provide a valid address.</CFormFeedback>
+              </CCol>
               <CCol xs={12}>
                 <CButton color="primary" type="submit">
                   Register Admin

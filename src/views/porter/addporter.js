@@ -15,15 +15,15 @@ import {
 import axios from 'axios'
 import Swal from 'sweetalert2' // Import SweetAlert2
 
-const AirplaneReg = () => {
+const Addporter = () => {
   const [validated, setValidated] = useState(false)
-  const [planeData, setPlaneData] = useState({
-    PlaneID: '',
-    Model: '',
-    Manufacturer: '',
-    YearOfManufacturer: '',
-    SeatingCapacity: '',
-    FuelCapacity: '',
+  const [porterData, setPorterData] = useState({
+    name: '',
+    shift: '',
+    contactNumber: '',
+    email: '',
+    position: '',
+    workLocation: '',
   })
   const navigate = useNavigate()
 
@@ -39,27 +39,27 @@ const AirplaneReg = () => {
 
       try {
         const response = await axios.post(
-          'http://localhost:8080/api/v1/airplane/addairplane',
-          planeData,
+          'http://localhost:8080/api/v1/porter/addporter',
+          porterData,
         )
         if (response.status === 200 || response.status === 201) {
           // Show SweetAlert2 success notification
           Swal.fire({
             icon: 'success',
-            title: 'Airplane Registered!',
-            text: 'The airplane has been added successfully.',
+            title: 'Porter Registered!',
+            text: 'The porter has been added successfully.',
           }).then(() => {
-            // Navigate to the airplane list after success
-            navigate('/airplane/airplanelist')
+            // Navigate to the porter list after success
+            navigate('/porter/porterlist')
           })
         }
       } catch (error) {
-        console.error('There was an error registering the airplane!', error)
+        console.error('There was an error registering the porter!', error)
         // Show SweetAlert2 error notification
         Swal.fire({
           icon: 'error',
           title: 'Registration Failed',
-          text: 'Failed to register the airplane. Please try again.',
+          text: 'Failed to register the porter. Please try again.',
         })
       }
     }
@@ -75,9 +75,9 @@ const AirplaneReg = () => {
         <CCard className="mb-4">
           <CCardHeader>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <strong>Add Airplane</strong>
+              <strong>Add Porter</strong>
               <CButton color="secondary" onClick={handleBackButtonClick}>
-                Back to Airplane list
+                Back to Porters list
               </CButton>
             </div>
           </CCardHeader>
@@ -89,69 +89,72 @@ const AirplaneReg = () => {
               onSubmit={handleSubmit}
             >
               <CCol md={6}>
-                <CFormLabel htmlFor="planeID">Plane ID</CFormLabel>
+                <CFormLabel htmlFor="name">Name</CFormLabel>
                 <CFormInput
                   type="text"
-                  id="planeID"
-                  value={planeData.PlaneID}
-                  onChange={(e) => setPlaneData({ ...planeData, PlaneID: e.target.value })}
+                  id="name"
+                  value={porterData.name}
+                  onChange={(e) => setPorterData({ ...porterData, name: e.target.value })}
                   required
                 />
                 <CFormFeedback valid>Looks good!</CFormFeedback>
               </CCol>
+
               <CCol md={6}>
-                <CFormLabel htmlFor="model">Model</CFormLabel>
+                <CFormLabel htmlFor="shift">Shift</CFormLabel>
                 <CFormInput
                   type="text"
-                  id="model"
-                  value={planeData.Model}
-                  onChange={(e) => setPlaneData({ ...planeData, Model: e.target.value })}
+                  id="shift"
+                  value={porterData.shift}
+                  onChange={(e) => setPorterData({ ...porterData, shift: e.target.value })}
                   required
                 />
                 <CFormFeedback valid>Looks good!</CFormFeedback>
               </CCol>
+
               <CCol md={6}>
-                <CFormLabel htmlFor="manufacturer">Manufacturer</CFormLabel>
+                <CFormLabel htmlFor="contactNumber">Contact Number</CFormLabel>
+                <CFormInput
+                  type="number"
+                  id="contactNumber"
+                  value={porterData.contactNumber}
+                  onChange={(e) => setPorterData({ ...porterData, contactNumber: e.target.value })}
+                  required
+                />
+                <CFormFeedback valid>Looks good!</CFormFeedback>
+              </CCol>
+
+              <CCol md={6}>
+                <CFormLabel htmlFor="email">Email</CFormLabel>
+                <CFormInput
+                  type="email"
+                  id="email"
+                  value={porterData.email}
+                  onChange={(e) => setPorterData({ ...porterData, email: e.target.value })}
+                  required
+                />
+                <CFormFeedback valid>Looks good!</CFormFeedback>
+              </CCol>
+
+              <CCol md={6}>
+                <CFormLabel htmlFor="position">Position</CFormLabel>
                 <CFormInput
                   type="text"
-                  id="manufacturer"
-                  value={planeData.Manufacturer}
-                  onChange={(e) => setPlaneData({ ...planeData, Manufacturer: e.target.value })}
+                  id="position"
+                  value={porterData.position}
+                  onChange={(e) => setPorterData({ ...porterData, position: e.target.value })}
                   required
                 />
                 <CFormFeedback valid>Looks good!</CFormFeedback>
               </CCol>
+
               <CCol md={6}>
-                <CFormLabel htmlFor="yearOfManufacturer">Year of Manufacturer</CFormLabel>
+                <CFormLabel htmlFor="workLocation">Work Location</CFormLabel>
                 <CFormInput
-                  type="number"
-                  id="yearOfManufacturer"
-                  value={planeData.YearOfManufacturer}
-                  onChange={(e) =>
-                    setPlaneData({ ...planeData, YearOfManufacturer: e.target.value })
-                  }
-                  required
-                />
-                <CFormFeedback valid>Looks good!</CFormFeedback>
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel htmlFor="seatingCapacity">Seating Capacity</CFormLabel>
-                <CFormInput
-                  type="number"
-                  id="seatingCapacity"
-                  value={planeData.SeatingCapacity}
-                  onChange={(e) => setPlaneData({ ...planeData, SeatingCapacity: e.target.value })}
-                  required
-                />
-                <CFormFeedback valid>Looks good!</CFormFeedback>
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel htmlFor="fuelCapacity">Fuel Capacity</CFormLabel>
-                <CFormInput
-                  type="number"
-                  id="fuelCapacity"
-                  value={planeData.FuelCapacity}
-                  onChange={(e) => setPlaneData({ ...planeData, FuelCapacity: e.target.value })}
+                  type="text"
+                  id="workLocation"
+                  value={porterData.workLocation}
+                  onChange={(e) => setPorterData({ ...porterData, workLocation: e.target.value })}
                   required
                 />
                 <CFormFeedback valid>Looks good!</CFormFeedback>
@@ -159,7 +162,7 @@ const AirplaneReg = () => {
 
               <CCol xs={12}>
                 <CButton color="primary" type="submit">
-                  Register Airplane
+                  Register Porter
                 </CButton>
               </CCol>
             </CForm>
@@ -170,4 +173,4 @@ const AirplaneReg = () => {
   )
 }
 
-export default AirplaneReg
+export default Addporter

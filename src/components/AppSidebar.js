@@ -15,7 +15,7 @@ import { AppSidebarNav } from './AppSidebarNav'
 
 import { logo } from 'src/assets/brand/logo'
 import { sygnet } from 'src/assets/brand/sygnet'
-import logoImage from 'src/assets/images/avatars/1.jpg'
+import logoImage from 'src/assets/images/avatars/logo new 1(1).png'
 
 // sidebar nav config
 import navigation from '../_nav'
@@ -42,7 +42,8 @@ const AppSidebar = () => {
             src={logoImage} // Use the imported image here
             alt="Logo"
             className="sidebar-brand-full"
-            height={32}
+            height={70}
+            width={200}
           />
           <CIcon customClassName="sidebar-brand-narrow" icon={sygnet} height={32} />
         </CSidebarBrand>

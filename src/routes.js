@@ -1,3 +1,4 @@
+import { element } from 'prop-types'
 import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
@@ -9,6 +10,22 @@ const Createadmin = React.lazy(() => import('./views/Admindetails/Createadmin'))
 const Adminlist = React.lazy(() => import('./views/Admindetails/Adminlist'))
 const Adminedit = React.lazy(() => import('./views/Admindetails/Adminedit'))
 const Admindelete = React.lazy(() => import('./views/Admindetails/Admindelete'))
+const addhanger = React.lazy(() => import('./views/hanger/addhanger'))
+const hangerlist = React.lazy(() => import('./views/hanger/hangerlist'))
+const hangeredit = React.lazy(() => import('./views/hanger/hangeredit'))
+
+const addpilot = React.lazy(() => import('./views/Pilot/addpilot'))
+const pilotlist = React.lazy(() => import('./views/Pilot/pilotlist'))
+const pilotedit = React.lazy(() => import('./views/Pilot/pilotedit'))
+
+const addvehicle = React.lazy(() => import('./views/vehicle/addvehicle'))
+const vehiclelist = React.lazy(() => import('./views/vehicle/vehiclelist'))
+const vehicleedit = React.lazy(() => import('./views/vehicle/vehicleedit'))
+
+const addporter = React.lazy(() => import('./views/porter/addporter'))
+const porterlist = React.lazy(() => import('./views/porter/porterlist'))
+const porteredit = React.lazy(() => import('./views/porter/porteredit.js'))
+
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -70,18 +87,31 @@ const routes = [
     element: Airplaneedit,
   },
   {
-    path: '/AirPlane/Airplanedelete/:registrationNumber',
+    path: '/AirPlane/Airplanedelete/:plane_id',
     name: 'Airplanedelete',
     element: Airplanedelete,
   },
   { path: '/Admindetails/Createadmin', name: 'Createadmin', element: Createadmin },
   { path: '/Admindetails/Adminlist', name: 'Adminlist', element: Adminlist },
   {
-    path: '/Admindetails/Adminedit/:adminId', // Updated with dynamic parameter
+    path: '/Admindetails/Adminedit/:admin_id', // Updated with dynamic parameter
     name: 'Adminedit',
     element: Adminedit,
   },
+  { path: '/hanger/hangerlist', name: 'hangerlist', element: hangerlist },
+  { path: '/hanger/hangeredit/:hanger_id', name: 'hangeredit', element: hangeredit },
+  { path: '/hanger/addhanger', name: 'addhanger', element: addhanger },
   { path: '/Admindetails/Admindelete', name: 'Admindelete', element: Admindelete },
+  { path: '/Pilot/addpilot', name: 'addpilot', element: addpilot },
+  { path: '/pilot/pilotlist', name: 'pilotlist', element: pilotlist },
+  { path: '/pilot/pilotedit/:pilot_id', name: 'pilotedit', element: pilotedit },
+  { path: '/vehicle/addvehicle', name: 'addvehicle', element: addvehicle },
+  { path: '/vehicle/vehicleedit/:vehicle_id', name: 'vehicleedit', element: vehicleedit },
+  { path: '/vehicle/vehiclelist', name: 'vehiclelist', element: vehiclelist },
+  { path: '/porter/addporter', name: 'addporter', element: addporter },
+  { path: '/porter/porterlist', name: 'porterlist', element: porterlist },
+  { path: '/porter/porteredit/:porter_id', name: 'porteredit', element: porteredit },
+
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },

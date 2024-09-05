@@ -18,31 +18,31 @@ import { FaEdit, FaTrash } from 'react-icons/fa'
 import axios from 'axios'
 import Swal from 'sweetalert2' // Import SweetAlert2
 
-const Adminlist = () => {
+const Pilotlist = () => {
   const navigate = useNavigate()
-  const [adminData, setAdminData] = useState([])
+  const [pilotData, setPilotData] = useState([])
 
   // Fetch data from the Spring Boot API
   useEffect(() => {
     axios
-      .get('http://localhost:8080/api/v1/admin/getadmin')
+      .get('http://localhost:8080/api/v1/pilot/getpilots')
       .then((response) => {
-        setAdminData(response.data)
+        setPilotData(response.data)
       })
       .catch((error) => {
-        console.error('There was an error fetching the admin data!', error)
+        console.error('There was an error fetching the pilots!', error)
       })
   }, [])
 
   const handleRegisterButtonClick = () => {
-    navigate('/Admindetails/Createadmin')
+    navigate('/pilot/addpilot')
   }
 
-  const handleUpdateButtonClick = (admin_id) => {
-    navigate(`/Admindetails/Adminedit/${admin_id}`)
+  const handleUpdateButtonClick = (pilotId) => {
+    navigate(`/pilot/pilotedit/${pilotId}`)
   }
 
-  const handleDeleteButtonClick = (admin) => {
+  const handleDeleteButtonClick = (pilot) => {
     // Show SweetAlert2 confirmation dialog
     Swal.fire({
       title: 'Are you sure?',
@@ -55,23 +55,23 @@ const Adminlist = () => {
       cancelButtonText: 'Cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        // Implement delete functionality with API call, sending the entire admin object
+        // Implement delete functionality with API call, sending the entire pilot object
         axios
-          .delete('http://localhost:8080/api/v1/admin/deleteadmin', {
-            data: admin, // Send the admin object in the request body
+          .delete('http://localhost:8080/api/v1/pilot/deletepilot', {
+            data: pilot, // Send the pilot object in the request body
           })
           .then(() => {
             //  refresh the list after deletion
-            setAdminData(adminData.filter((a) => a.admin_id !== admin.admin_id))
+            setPilotData(pilotData.filter((p) => p.pilotId !== pilot.pilotId))
 
             // Show success message
-            Swal.fire('Deleted!', 'The admin has been deleted.', 'success')
+            Swal.fire('Deleted!', 'The pilot has been deleted.', 'success')
           })
           .catch((error) => {
-            console.error(`There was an error deleting the admin with ID ${admin.admin_id}!`, error)
+            console.error(`There was an error deleting the pilot with ID ${pilot.pilotId}!`, error)
 
             // Show error message
-            Swal.fire('Error!', 'There was an error deleting the admin.', 'error')
+            Swal.fire('Error!', 'There was an error deleting the pilot.', 'error')
           })
       }
     })
@@ -83,9 +83,9 @@ const Adminlist = () => {
         <CCard className="mb-4">
           <CCardHeader>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <strong>Admin List</strong>
+              <strong>Pilot List</strong>
               <CButton color="primary" onClick={handleRegisterButtonClick}>
-                Register New Admin
+                Register New Pilot
               </CButton>
             </div>
           </CCardHeader>
@@ -94,30 +94,32 @@ const Adminlist = () => {
               <CTableHead>
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
-                  <CTableHeaderCell>Full Name</CTableHeaderCell>
-                  <CTableHeaderCell>Username</CTableHeaderCell>
-                  <CTableHeaderCell>Position</CTableHeaderCell>
+                  <CTableHeaderCell>Pilot Name</CTableHeaderCell>
+                  <CTableHeaderCell>Licenses Number</CTableHeaderCell>
                   <CTableHeaderCell>Email</CTableHeaderCell>
-                  <CTableHeaderCell>Phone</CTableHeaderCell>
-                  <CTableHeaderCell>Address</CTableHeaderCell>
+                  <CTableHeaderCell>Phone Number</CTableHeaderCell>
+                  <CTableHeaderCell>Hire Date</CTableHeaderCell>
+                  <CTableHeaderCell>Flight Hours</CTableHeaderCell>
                   <CTableHeaderCell>Actions</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
-                {adminData.length > 0 ? (
-                  adminData.map((admin, index) => (
-                    <CTableRow key={admin.admin_id}>
+                {pilotData.length > 0 ? (
+                  pilotData.map((pilot, index) => (
+                    <CTableRow key={pilot.pilotId}>
                       <CTableDataCell>{index + 1}</CTableDataCell>
-                      <CTableDataCell>{admin.admin_fullName}</CTableDataCell>
-                      <CTableDataCell>{admin.userName}</CTableDataCell>
-                      <CTableDataCell>{admin.admin_position}</CTableDataCell>
-                      <CTableDataCell>{admin.admin_email}</CTableDataCell>
-                      <CTableDataCell>{admin.admin_phone}</CTableDataCell>
-                      <CTableDataCell>{admin.admin_address}</CTableDataCell>
+                      <CTableDataCell>{pilot.pilotName}</CTableDataCell>
+                      <CTableDataCell>{pilot.licencesNumber}</CTableDataCell>
+                      <CTableDataCell>{pilot.email}</CTableDataCell>
+                      <CTableDataCell>{pilot.phoneNumber}</CTableDataCell>
+                      <CTableDataCell>
+                        {new Date(pilot.hireDate).toLocaleDateString()}
+                      </CTableDataCell>
+                      <CTableDataCell>{pilot.flightHours}</CTableDataCell>
                       <CTableDataCell>
                         <CButton
                           color="warning"
-                          onClick={() => handleUpdateButtonClick(admin.admin_id)}
+                          onClick={() => handleUpdateButtonClick(pilot.pilotId)}
                           className="me-2"
                           shape="rounded"
                           variant="outline"
@@ -126,7 +128,7 @@ const Adminlist = () => {
                         </CButton>
                         <CButton
                           color="danger"
-                          onClick={() => handleDeleteButtonClick(admin)}
+                          onClick={() => handleDeleteButtonClick(pilot)}
                           shape="rounded"
                           variant="outline"
                         >
@@ -138,7 +140,7 @@ const Adminlist = () => {
                 ) : (
                   <CTableRow>
                     <CTableDataCell colSpan="8" className="text-center">
-                      No admins found.
+                      No pilots found.
                     </CTableDataCell>
                   </CTableRow>
                 )}
@@ -151,4 +153,4 @@ const Adminlist = () => {
   )
 }
 
-export default Adminlist
+export default Pilotlist

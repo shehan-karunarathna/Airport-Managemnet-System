@@ -15,32 +15,33 @@ import {
 } from '@coreui/react'
 import axios from 'axios'
 
-const Airplaneedit = () => {
-  const { plane_id } = useParams() // Get planeId from URL parameters
+const Porteredit = () => {
+  const { porter_id } = useParams() // Get porterId from URL parameters
   const [validated, setValidated] = useState(false)
-  const [airplaneData, setAirplaneData] = useState({
-    model: '',
-    manufacturer: '',
-    year_of_manufacturer: '',
-    seating_capacity: '',
-    fuel_capacity: '',
+  const [porterData, setPorterData] = useState({
+    name: '',
+    shift: '',
+    contactNumber: '',
+    email: '',
+    position: '',
+    workLocation: '',
   })
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Fetch airplane data based on planeId from the backend API
-    const fetchAirplaneData = async () => {
+    // Fetch porter data based on porterId from the backend API
+    const fetchPorterData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/v1/airplane/getAirplaneByPlaneid/${plane_id}`,
+          `http://localhost:8080/api/v1/porter/getPorterById/${porter_id}`,
         )
-        setAirplaneData(response.data) // Auto-fill form with fetched data
+        setPorterData(response.data) // Auto-fill form with fetched data
       } catch (error) {
-        console.error('There was an error fetching the airplane data!', error)
+        console.error('There was an error fetching the porter data!', error)
       }
     }
-    fetchAirplaneData()
-  }, [plane_id]) // Fetch data when planeId changes
+    fetchPorterData()
+  }, [porter_id]) // Fetch data when porterId changes
 
   const handleSubmit = async (event) => {
     const form = event.currentTarget
@@ -66,16 +67,16 @@ const Airplaneedit = () => {
 
       if (result.isConfirmed) {
         try {
-          // Send PUT request to update the airplane data to the backend
-          await axios.put('http://localhost:8080/api/v1/airplane/updateAirplane', airplaneData)
+          // Send PUT request to update the porter data to the backend
+          await axios.put(`http://localhost:8080/api/v1/porter/updatePorter`, porterData)
 
           // Show SweetAlert2 success notification
           Swal.fire('Saved!', 'Your changes have been saved.', 'success')
 
-          // Navigate back to the airplane list
-          navigate('/Airplane/Airplanelist')
+          // Navigate back to the porter list
+          navigate('/porter/porterlist')
         } catch (error) {
-          console.error('There was an error saving the airplane data!', error)
+          console.error('There was an error saving the porter data!', error)
 
           // Show SweetAlert2 error notification
           Swal.fire('Error', 'There was an issue saving your changes.', 'error')
@@ -100,9 +101,9 @@ const Airplaneedit = () => {
               <div
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
               >
-                <strong>Edit Airplane</strong>
+                <strong>Edit Porter</strong>
                 <CButton color="secondary" onClick={handleBackButtonClick}>
-                  Back to Airplanes list
+                  Back to Porters list
                 </CButton>
               </div>
             </CCardHeader>
@@ -114,77 +115,69 @@ const Airplaneedit = () => {
                 onSubmit={handleSubmit}
               >
                 <CCol md={6}>
-                  <CFormLabel htmlFor="airplaneModel">Model</CFormLabel>
+                  <CFormLabel htmlFor="porterName">Name</CFormLabel>
                   <CFormInput
                     type="text"
-                    id="airplaneModel"
-                    value={airplaneData.model}
-                    onChange={(e) => setAirplaneData({ ...airplaneData, model: e.target.value })}
+                    id="porterName"
+                    value={porterData.name}
+                    onChange={(e) => setPorterData({ ...porterData, name: e.target.value })}
                     required
                   />
                   <CFormFeedback valid>Looks good!</CFormFeedback>
                 </CCol>
-
                 <CCol md={6}>
-                  <CFormLabel htmlFor="airplaneManufacturer">Manufacturer</CFormLabel>
+                  <CFormLabel htmlFor="porterShift">Shift</CFormLabel>
                   <CFormInput
                     type="text"
-                    id="airplaneManufacturer"
-                    value={airplaneData.manufacturer}
+                    id="porterShift"
+                    value={porterData.shift}
+                    onChange={(e) => setPorterData({ ...porterData, shift: e.target.value })}
+                    required
+                  />
+                  <CFormFeedback valid>Looks good!</CFormFeedback>
+                </CCol>
+                <CCol md={6}>
+                  <CFormLabel htmlFor="contactNumber">Contact Number</CFormLabel>
+                  <CFormInput
+                    type="number"
+                    id="contactNumber"
+                    value={porterData.contactNumber}
                     onChange={(e) =>
-                      setAirplaneData({ ...airplaneData, manufacturer: e.target.value })
+                      setPorterData({ ...porterData, contactNumber: e.target.value })
                     }
                     required
                   />
                   <CFormFeedback valid>Looks good!</CFormFeedback>
                 </CCol>
-
                 <CCol md={6}>
-                  <CFormLabel htmlFor="yearOfManufacturer">Year of Manufacturer</CFormLabel>
+                  <CFormLabel htmlFor="email">Email</CFormLabel>
                   <CFormInput
-                    type="number"
-                    id="yearOfManufacturer"
-                    value={airplaneData.year_of_manufacturer}
-                    onChange={(e) =>
-                      setAirplaneData({
-                        ...airplaneData,
-                        year_of_manufacturer: e.target.value,
-                      })
-                    }
+                    type="email"
+                    id="email"
+                    value={porterData.email}
+                    onChange={(e) => setPorterData({ ...porterData, email: e.target.value })}
                     required
                   />
                   <CFormFeedback valid>Looks good!</CFormFeedback>
                 </CCol>
-
                 <CCol md={6}>
-                  <CFormLabel htmlFor="seatingCapacity">Seating Capacity</CFormLabel>
+                  <CFormLabel htmlFor="position">Position</CFormLabel>
                   <CFormInput
-                    type="number"
-                    id="seatingCapacity"
-                    value={airplaneData.seating_capacity}
-                    onChange={(e) =>
-                      setAirplaneData({
-                        ...airplaneData,
-                        seating_capacity: e.target.value,
-                      })
-                    }
+                    type="text"
+                    id="position"
+                    value={porterData.position}
+                    onChange={(e) => setPorterData({ ...porterData, position: e.target.value })}
                     required
                   />
                   <CFormFeedback valid>Looks good!</CFormFeedback>
                 </CCol>
-
                 <CCol md={6}>
-                  <CFormLabel htmlFor="fuelCapacity">Fuel Capacity (in liters)</CFormLabel>
+                  <CFormLabel htmlFor="workLocation">Work Location</CFormLabel>
                   <CFormInput
-                    type="number"
-                    id="fuelCapacity"
-                    value={airplaneData.fuel_capacity}
-                    onChange={(e) =>
-                      setAirplaneData({
-                        ...airplaneData,
-                        fuel_capacity: e.target.value,
-                      })
-                    }
+                    type="text"
+                    id="workLocation"
+                    value={porterData.workLocation}
+                    onChange={(e) => setPorterData({ ...porterData, workLocation: e.target.value })}
                     required
                   />
                   <CFormFeedback valid>Looks good!</CFormFeedback>
@@ -204,4 +197,4 @@ const Airplaneedit = () => {
   )
 }
 
-export default Airplaneedit
+export default Porteredit
